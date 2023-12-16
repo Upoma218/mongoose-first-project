@@ -160,9 +160,13 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: String,
       required: [true, 'Profile Image URL is required'],
     },
-    admissionSemester:{
+    admissionSemester: {
       type: Schema.Types.ObjectId,
-      ref: 'AcademicSemester'
+      ref: 'AcademicSemester',
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
     },
     isDeleted: {
       type: Boolean,
@@ -193,9 +197,9 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
-studentSchema.virtual('fullname').get(function () {
-  return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
-});
+// studentSchema.virtual('fullname').get(function () {
+//   return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
+// });
 
 // Creating a custom static method
 /* ------------------------------------------------------- */

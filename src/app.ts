@@ -15,12 +15,13 @@ app.use(cors());
 
 app.use('/api/v1', router);
 
-const getAController = (req: Request, res: Response) => {
+const test = async(req: Request, res: Response) => {
+
   const helloWorld = "'Hello World!'";
   res.send(helloWorld);
 };
 
-app.get('/', getAController);
+app.get('/', test);
 
 app.use(globalErrorHandler);
 

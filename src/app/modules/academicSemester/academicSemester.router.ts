@@ -13,10 +13,7 @@ router.post(
   AcademicSemesterConttrollers.createAcademicSemester,
 );
 
-router.get(
-  '/',
-  AcademicSemesterConttrollers.getAllAcademicSemester,
-);
+router.get('/', AcademicSemesterConttrollers.getAllAcademicSemester);
 
 router.get(
   '/:semesterId',
