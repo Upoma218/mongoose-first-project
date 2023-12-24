@@ -105,9 +105,10 @@ export const generateAdminId = async () => {
   if (lastAdminId) {
     currentId = lastAdminId.substring(2);
   }
-
+ 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
 
   incrementId = `A-${incrementId}`;
+
   return incrementId;
 };
