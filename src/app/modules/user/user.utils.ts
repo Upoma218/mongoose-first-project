@@ -61,7 +61,7 @@ export const findLastFacultyId = async () => {
     })
     .lean();
 
-  return lastFaculty?.id ? lastFaculty.id.substring(2) : undefined;
+  return lastFaculty?.id ? lastFaculty.id.substring(1) : undefined;
 };
 
 export const generateFacultyId = async () => {
@@ -69,12 +69,12 @@ export const generateFacultyId = async () => {
   const lastFacultyId = await findLastFacultyId();
 
   if (lastFacultyId) {
-    currentId = lastFacultyId.substring(2);
+    currentId = lastFacultyId?.substring(1);
   }
 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
 
-  incrementId = `F-${incrementId}`;
+  incrementId = `5${incrementId}`;
 
   return incrementId;
 };
@@ -95,7 +95,7 @@ export const findLastAdminId = async () => {
     })
     .lean();
 
-  return lastAdmin?.id ? lastAdmin.id.substring(2) : undefined;
+  return lastAdmin?.id ? lastAdmin.id.substring(1) : undefined;
 };
 
 export const generateAdminId = async () => {
@@ -103,7 +103,7 @@ export const generateAdminId = async () => {
   const lastAdminId = await findLastAdminId();
 
   if (lastAdminId) {
-    currentId = lastAdminId.substring(2);
+    currentId = lastAdminId?.substring(1);
   }
  
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');

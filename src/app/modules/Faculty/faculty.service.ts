@@ -49,14 +49,14 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
   return result;
 };
 
-const deleteFacultyFromDB = async (id: string) => {
+const deleteFacultyFromDB = async (facultyId: string) => {
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
 
     const deletedFaculty = await Faculty.findByIdAndUpdate(
-      id,
+      facultyId,
       { isDeleted: true },
       { new: true, session },
     );
@@ -66,10 +66,10 @@ const deleteFacultyFromDB = async (id: string) => {
     }
 
     // get user _id from deletedFaculty
-    const userId = deletedFaculty.user;
+    const id = deletedFaculty.user;
 
     const deletedUser = await User.findByIdAndUpdate(
-      userId,
+      id,
       { isDeleted: true },
       { new: true, session },
     );

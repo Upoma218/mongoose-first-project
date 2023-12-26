@@ -45,14 +45,14 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
   return result;
 };
 
-const deleteAdminFromDB = async (id: string) => {
+const deleteAdminFromDB = async (adminId: string) => {
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
 
     const deletedAdmin = await Admin.findByIdAndUpdate(
-      id,
+      adminId,
       { isDeleted: true },
       { new: true, session },
     );
@@ -62,10 +62,10 @@ const deleteAdminFromDB = async (id: string) => {
     }
 
     // get user _id from deletedAdmin
-    const userId = deletedAdmin.user;
+    const id = deletedAdmin.user;
 
     const deletedUser = await User.findOneAndUpdate(
-      userId,
+      id,
       { isDeleted: true },
       { new: true, session },
     );

@@ -34,13 +34,18 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
       unique: true,
       ref: 'User',
     },
-    designation: {
-      type: String,
-      required: [true, 'Designation is required'],
-    },
     name: {
       type: userNameSchema,
       required: [true, 'Name is required'],
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+    },
+    designation: {
+      type: String,
+      required: [true, 'Designation is required'],
     },
     gender: {
       type: String,
@@ -50,13 +55,13 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
       },
       required: [true, 'Gender is required'],
     },
-    dateOfBirth: { type: Date },
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      unique: true,
+    dateOfBirth: { 
+      type: Date 
     },
-    contactNo: { type: String, required: [true, 'Contact number is required'] },
+    contactNo: { 
+      type: String, 
+      required: [true, 'Contact number is required'] 
+    },
     emergencyContactNo: {
       type: String,
       required: [true, 'Emergency contact number is required'],
@@ -93,9 +98,9 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
 adminSchema.virtual('fullName').get(function () {
   return (
     this?.name?.firstName +
-    '' +
+    ' ' +
     this?.name?.middleName +
-    '' +
+    ' ' +
     this?.name?.lastName
   );
 });

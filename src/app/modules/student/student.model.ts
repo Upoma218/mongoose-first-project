@@ -120,7 +120,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     contactNo: {
       type: String,
       required: [true, 'Contact Number is required'],
-      unique: true,
     },
     emergencyContactNo: {
       type: String,
