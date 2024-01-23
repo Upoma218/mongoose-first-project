@@ -32,15 +32,15 @@ const moduleRoutes = [
     route: AdminRoutes,
   },
   {
-    path: '/academicSemester',
+    path: '/academic-semester',
     route: AcademicSemesterRoute,
   },
   {
-    path: '/academicFaculty',
+    path: '/academic-faculty',
     route: AcadmicFacultyRoutes,
   },
   {
-    path: '/academicDepartment',
+    path: '/academic-department',
     route: AcademicDepartmentRouters,
   },
   {

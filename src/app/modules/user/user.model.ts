@@ -4,6 +4,7 @@ import { Schema, model } from 'mongoose';
 import { TUser, UserModel } from './user.interface';
 import { UserStatus } from './user.constant';
 import config from '../../config';
+
 const userSchema = new Schema<TUser, UserModel>(
   {
     id: {
@@ -62,7 +63,6 @@ userSchema.pre('save', async function (next) {
 
 // set '' after saving password
 userSchema.post('save', function (doc, next) {
-  doc.password = '';
   next();
 });
 
