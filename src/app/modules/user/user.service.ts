@@ -192,7 +192,7 @@ const createAdminIntoDB = async (
 
   try {
     session.startTransaction();
-    //set  generated id
+    //set generated id
     userData.id = await generateAdminId();
 
     if (file) {

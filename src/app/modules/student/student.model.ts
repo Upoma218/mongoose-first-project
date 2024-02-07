@@ -157,6 +157,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     },
     profileImg: {
       type: String,
+      default: '',
       required: [true, 'Profile Image URL is required'],
     },
     admissionSemester: {
