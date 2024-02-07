@@ -3,9 +3,9 @@ import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
 import AppError from '../errors/AppError';
+import catchAsync from '../utils/catchAsync';
 import { TUserRole } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
-import catchAsync from '../utils/catchAsync';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -16,24 +16,16 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
     }
 
-    let decoded;
-
     // checking if the given token is valid
-   try{
-    decoded = jwt.verify(
+    const decoded = jwt.verify(
       token,
       config.jwt_access_secret as string,
     ) as JwtPayload;
 
-   }catch(err) {
-    throw new AppError(httpStatus.UNAUTHORIZED,"Unauothrized Access!");
-    
-   }
     const { role, userId, iat } = decoded;
 
     // checking if the user is exist
     const user = await User.isUserExistsByCustomId(userId);
-    // console.log("I am the user",user, decoded)
 
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
@@ -70,7 +62,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       );
     }
 
-    req.user = decoded as JwtPayload;
+    req.user = decoded as JwtPayload & { role: string };
     next();
   });
 };

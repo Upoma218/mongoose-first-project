@@ -1,8 +1,9 @@
 import httpStatus from 'http-status';
+import config from '../../config';
+import AppError from '../../errors/AppError';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { AuthService } from './auth.service';
-import config from '../../config';
 
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthService.loginUser(req.body);
@@ -11,6 +12,8 @@ const loginUser = catchAsync(async (req, res) => {
   res.cookie('refreshToken', refreshToken, {
     secure: config.NODE_ENV === 'production',
     httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
   });
 
   sendResponse(res, {
@@ -26,9 +29,8 @@ const loginUser = catchAsync(async (req, res) => {
 
 const changePassword = catchAsync(async (req, res) => {
   const { ...passwordData } = req.body;
-  const result = await AuthService.changePassword(req.user, passwordData);
-  
 
+  const result = await AuthService.changePassword(req.user, passwordData);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -40,7 +42,7 @@ const changePassword = catchAsync(async (req, res) => {
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
   const result = await AuthService.refreshToken(refreshToken);
-  
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -62,21 +64,24 @@ const forgetPassword = catchAsync(async (req, res) => {
 
 const resetPassword = catchAsync(async (req, res) => {
   const token = req.headers.authorization;
-  console.log(token)
 
-  const result = await AuthService.resetPassword(req.body, token as string);
+  if (!token) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Something went wrong !');
+  }
+
+  const result = await AuthService.resetPassword(req.body, token);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Password reset succesful!',
+    message: 'Password reset succesfully!',
     data: result,
   });
 });
 
-export const AuthController = {
+export const AuthControllers = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
   resetPassword,
-  forgetPassword
 };

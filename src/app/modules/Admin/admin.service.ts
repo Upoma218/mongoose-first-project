@@ -3,10 +3,10 @@ import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
-import { User } from '../user/user.model';
 import { AdminSearchableFields } from './admin.constant';
 import { TAdmin } from './admin.interface';
 import { Admin } from './admin.model';
+import { User } from '../user/user.model';
 
 const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find(), query)
@@ -17,7 +17,11 @@ const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
     .fields();
 
   const result = await adminQuery.modelQuery;
-  return result;
+  const meta = await adminQuery.countTotal();
+  return {
+    result,
+    meta,
+  };
 };
 
 const getSingleAdminFromDB = async (id: string) => {
@@ -45,14 +49,14 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
   return result;
 };
 
-const deleteAdminFromDB = async (adminId: string) => {
+const deleteAdminFromDB = async (id: string) => {
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
 
     const deletedAdmin = await Admin.findByIdAndUpdate(
-      adminId,
+      id,
       { isDeleted: true },
       { new: true, session },
     );
@@ -62,10 +66,10 @@ const deleteAdminFromDB = async (adminId: string) => {
     }
 
     // get user _id from deletedAdmin
-    const id = deletedAdmin.user;
+    const userId = deletedAdmin.user;
 
     const deletedUser = await User.findOneAndUpdate(
-      id,
+      userId,
       { isDeleted: true },
       { new: true, session },
     );

@@ -1,12 +1,12 @@
-import AppError from '../../errors/AppError';
-import { User } from '../user/user.model';
-import { TLoginUser } from './auth.interface';
-import config from '../../config';
-import { createToken, verifyToken } from './auth.utils';
-import jwt,{ JwtPayload} from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import config from '../../config';
+import AppError from '../../errors/AppError';
 import { sendEmail } from '../../utils/sendEmail';
+import { TLoginUser } from './auth.interface';
+import { createToken, verifyToken } from './auth.utils';
+import { User } from '../user/user.model';
 
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
@@ -116,14 +116,9 @@ const changePassword = async (
 
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
   const { userId, iat } = decoded;
-
-  console.log(decoded)
 
   // checking if the user is exist
   const user = await User.isUserExistsByCustomId(userId);
@@ -196,13 +191,15 @@ const forgetPassword = async (userId: string) => {
 
   const resetToken = createToken(
     jwtPayload,
-    config.jwt_refresh_secret as string,
-    '30m',
+    config.jwt_access_secret as string,
+    '10m',
   );
 
   const resetUILink = `${config.reset_pass_ui_link}?id=${user.id}&token=${resetToken} `;
 
-  sendEmail(user.email, resetUILink)
+  sendEmail(user.email, resetUILink);
+
+  console.log(resetUILink);
 };
 
 const resetPassword = async (
@@ -229,13 +226,14 @@ const resetPassword = async (
     throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
   }
 
-  console.log(config.jwt_refresh_secret)
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
 
-  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
-
+  //localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBL0x98e0D482b85836Add554Aa57EFEFaa781a828f10iOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
 
   if (payload.id !== decoded.userId) {
-    console.log(payload.id, decoded.userId);
     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
   }
 

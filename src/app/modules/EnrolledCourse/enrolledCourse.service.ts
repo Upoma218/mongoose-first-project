@@ -4,15 +4,15 @@ import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
 import { Course } from '../Course/course.model';
 import { Faculty } from '../Faculty/faculty.model';
+import { OfferedCourse } from '../offerdCourse/offeredCourse.model';
 import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
 import { Student } from '../student/student.model';
 import { TEnrolledCourse } from './enrolledCourse.interface';
 import EnrolledCourse from './enrolledCourse.model';
 import { calculateGradeAndPoints } from './enrolledCourse.utils';
-import { OfferedCourse } from '../offerdCourse/offeredCourse.model';
 
 const createEnrolledCourseIntoDB = async (
-  userId: string,
+  id: string,
   payload: TEnrolledCourse,
 ) => {
   /**
@@ -34,7 +34,7 @@ const createEnrolledCourseIntoDB = async (
     throw new AppError(httpStatus.BAD_GATEWAY, 'Room is full !');
   }
 
-  const student = await Student.findOne({ id: userId }, { _id: 1 });
+  const student = await Student.findOne({ id: id }, { _id: 1 });
 
   if (!student) {
     throw new AppError(httpStatus.NOT_FOUND, 'Student not found !');
@@ -123,7 +123,6 @@ const createEnrolledCourseIntoDB = async (
       ],
       { session },
     );
-
 
     if (!result) {
       throw new AppError(

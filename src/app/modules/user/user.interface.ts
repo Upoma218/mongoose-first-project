@@ -8,7 +8,7 @@ export interface TUser {
   password: string;
   needsPasswordChange: boolean;
   passwordChangedAt?: Date;
-  role: 'admin' | 'student' | 'faculty';
+  role: 'superAdmin' | 'admin' | 'student' | 'faculty';
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
 }
@@ -26,6 +26,5 @@ export interface UserModel extends Model<TUser> {
     jwtIssuedTimestamp: number,
   ): boolean;
 }
-
 
 export type TUserRole = keyof typeof USER_ROLE;

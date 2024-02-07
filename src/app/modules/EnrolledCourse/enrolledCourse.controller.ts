@@ -5,9 +5,9 @@ import { EnrolledCourseServices } from './enrolledCourse.service';
 
 const createEnrolledCourse = catchAsync(async (req, res) => {
   // console.log(req.user)
-  const userId = req.user.userId;
+  const id = req.user.id;
   const result = await EnrolledCourseServices.createEnrolledCourseIntoDB(
-    userId,
+    id,
     req.body,
   );
 
@@ -20,7 +20,7 @@ const createEnrolledCourse = catchAsync(async (req, res) => {
 });
 
 const updateEnrolledCourseMarks = catchAsync(async (req, res) => {
-  const facultyId = req.user.userId;
+  const facultyId = req.user.id;
   const result = await EnrolledCourseServices.updateEnrolledCourseMarksIntoDB(
     facultyId,
     req.body,
