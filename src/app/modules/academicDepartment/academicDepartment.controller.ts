@@ -17,20 +17,21 @@ const createAcademicDepartment = catchAsync(async (req, res) => {
 
 const getAllAcademicDepartments = catchAsync(async (req, res) => {
   const result =
-    await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB();
+    await AcademicDepartmentServices.getAllAcademicDepartmentsFromDB(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Academic Departments retrived Successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 
 const getSingleAcademicDepartment = catchAsync(async (req, res) => {
   const { departmentId } = req.params;
   const result =
-    await AcademicDepartmentServices.getSingleAcadmeicDepartmentFromDB(
+    await AcademicDepartmentServices.getSingleAcademicDepartmentFromDB(
       departmentId,
     );
 
@@ -38,7 +39,7 @@ const getSingleAcademicDepartment = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Academic Department retrived Successfully!',
-    data: result,
+    data: result
   });
 });
 

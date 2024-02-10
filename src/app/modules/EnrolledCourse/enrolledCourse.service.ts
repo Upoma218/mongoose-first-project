@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
+import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { Course } from '../Course/course.model';
-import { Faculty } from '../Faculty/faculty.model';
-import { OfferedCourse } from '../offerdCourse/offeredCourse.model';
-import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
-import { Student } from '../student/student.model';
 import { TEnrolledCourse } from './enrolledCourse.interface';
 import EnrolledCourse from './enrolledCourse.model';
 import { calculateGradeAndPoints } from './enrolledCourse.utils';
+import { OfferedCourse } from '../offerdCourse/offeredCourse.model';
+import { Student } from '../student/student.model';
+import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
+import { Faculty } from '../Faculty/faculty.model';
 
 const createEnrolledCourseIntoDB = async (
-  id: string,
+  userId: string,
   payload: TEnrolledCourse,
 ) => {
   /**
@@ -34,7 +35,8 @@ const createEnrolledCourseIntoDB = async (
     throw new AppError(httpStatus.BAD_GATEWAY, 'Room is full !');
   }
 
-  const student = await Student.findOne({ id: id }, { _id: 1 });
+  const student = await Student.findOne({ userId }, { _id: 1 });
+
 
   if (!student) {
     throw new AppError(httpStatus.NOT_FOUND, 'Student not found !');
@@ -146,6 +148,70 @@ const createEnrolledCourseIntoDB = async (
     throw new Error(err);
   }
 };
+
+const getAllEnrolledCoursesFromDB = async (
+  facultyId: string,
+  query: Record<string, unknown>,
+) => {
+  const faculty = await Faculty.findOne({ facultyId });
+  
+
+  if (!faculty) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found !');
+  }
+
+  const enrolledCourseQuery = new QueryBuilder(
+    EnrolledCourse.find({
+      faculty: faculty._id,
+    }).populate(
+      'semesterRegistration academicSemester academicFaculty academicDepartment offeredCourse course student faculty',
+    ),
+    query,
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await enrolledCourseQuery.modelQuery;
+  const meta = await enrolledCourseQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
+
+const getMyEnrolledCoursesFromDB = async (
+  studentId: string,
+  query: Record<string, unknown>,
+) => {
+  const student = await Student.findOne({id: studentId });
+
+  if (!student) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Student not found !');
+  }
+
+  const enrolledCourseQuery = new QueryBuilder(
+    EnrolledCourse.find({ student: student._id }).populate(
+      'semesterRegistration academicSemester academicFaculty academicDepartment offeredCourse course student faculty',
+    ),
+    query,
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await enrolledCourseQuery.modelQuery;
+  const meta = await enrolledCourseQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
+
 const updateEnrolledCourseMarksIntoDB = async (
   facultyId: string,
   payload: Partial<TEnrolledCourse>,
@@ -173,7 +239,7 @@ const updateEnrolledCourseMarksIntoDB = async (
     throw new AppError(httpStatus.NOT_FOUND, 'Student not found !');
   }
 
-  const faculty = await Faculty.findOne({ id: facultyId }, { _id: 1 });
+  const faculty = await Faculty.findOne({facultyId }, { _id: 1 });
 
   if (!faculty) {
     throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found !');
@@ -199,10 +265,10 @@ const updateEnrolledCourseMarksIntoDB = async (
       isCourseBelongToFaculty.courseMarks;
 
     const totalMarks =
-      Math.ceil(classTest1 * 0.1) +
-      Math.ceil(midTerm * 0.3) +
-      Math.ceil(classTest2 * 0.1) +
-      Math.ceil(finalTerm * 0.5);
+      Math.ceil(classTest1) +
+      Math.ceil(midTerm) +
+      Math.ceil(classTest2) +
+      Math.ceil(finalTerm);
 
     const result = calculateGradeAndPoints(totalMarks);
 
@@ -230,5 +296,7 @@ const updateEnrolledCourseMarksIntoDB = async (
 
 export const EnrolledCourseServices = {
   createEnrolledCourseIntoDB,
+  getAllEnrolledCoursesFromDB,
+  getMyEnrolledCoursesFromDB,
   updateEnrolledCourseMarksIntoDB,
 };
