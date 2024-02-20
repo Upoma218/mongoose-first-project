@@ -17,16 +17,18 @@ router.post(
 );
 
 router.get('/',
-auth(), 
+auth(USER_ROLE.superAdmin, USER_ROLE.admin), 
 AcademicFacultyControllers.getAllAcademicFaculties);
 
 router.get(
   '/:facultyId', 
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin), 
   AcademicFacultyControllers.getSingleAcademicFaculty
   );
   
 router.patch(
   '/:facultyId',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin), 
   validateRequest(
     AcademicFacultyValidation.updateAcademisFacultyValidationSchema,
   ),
