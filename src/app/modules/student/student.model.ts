@@ -201,7 +201,7 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
-studentSchema.virtual('fullname').get(function () {
+studentSchema.virtual('fullName').get(function () {
   return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
 });
 
