@@ -201,9 +201,9 @@ studentSchema.pre('aggregate', function (next) {
   next();
 });
 
-// studentSchema.virtual('fullname').get(function () {
-//   return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
-// });
+studentSchema.virtual('fullname').get(function () {
+  return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
+});
 
 // Creating a custom static method
 /* ------------------------------------------------------- */
