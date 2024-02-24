@@ -1,10 +1,10 @@
 import { model, Schema } from 'mongoose';
 import validator from 'validator';
 import {
+  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
-  StudentModel,
   TUserName,
 } from './student.interface';
 
@@ -160,7 +160,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       default: '',
       required: [true, 'Profile Image URL is required'],
     },
-    admissionSemester: {
+    academicSemester: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicSemester',
     },

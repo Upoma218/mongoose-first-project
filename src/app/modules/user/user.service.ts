@@ -9,6 +9,10 @@ import { TAdmin } from '../Admin/admin.interface';
 import { Admin } from '../Admin/admin.model';
 import { TFaculty } from '../Faculty/faculty.interface';
 import { Faculty } from '../Faculty/faculty.model';
+import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
+import { AcademicSemester } from '../academicSemester/academicSemester.model';
+import { TStudent } from '../student/student.interface';
+import { Student } from '../student/student.model';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import {
@@ -16,10 +20,6 @@ import {
   generateFacultyId,
   generateStudentId,
 } from './user.utils';
-import { TStudent } from '../student/student.interface';
-import { AcademicSemester } from '../academicSemester/academicSemester.model';
-import { AcademicDepartment } from '../academicDepartment/academicDepartment.model';
-import { Student } from '../student/student.model';
 
 const createStudentIntoDB = async (
   file: any,
@@ -38,11 +38,11 @@ const createStudentIntoDB = async (
   userData.email = payload.email;
 
   // find academic semester info
-  const admissionSemester = await AcademicSemester.findById(
-    payload.admissionSemester,
+  const academicSemester = await AcademicSemester.findById(
+    payload.academicSemester,
   );
 
-  if (!admissionSemester) {
+  if (!academicSemester) {
     throw new AppError(400, 'Admission semester not found');
   }
 
@@ -61,7 +61,7 @@ const createStudentIntoDB = async (
   try {
     session.startTransaction();
     //set  generated id
-    userData.id = await generateStudentId(admissionSemester);
+    userData.id = await generateStudentId(academicSemester);
 
     if (file) {
       const imageName = `${userData.id}${payload?.name?.firstName}`;

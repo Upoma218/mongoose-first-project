@@ -1,11 +1,11 @@
+import httpStatus from 'http-status';
 import mongoose from 'mongoose';
-import { Student } from './student.model';
+import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { User } from '../user/user.model';
-import httpStatus from 'http-status';
-import { TStudent } from './student.interface';
-import QueryBuilder from '../../builder/QueryBuilder';
 import { studentSearchableFields } from './student.constant';
+import { TStudent } from './student.interface';
+import { Student } from './student.model';
 
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   // const queryObj = { ...query }; //copy
@@ -32,7 +32,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
   // const filterQuery = searchQuery
   //   .find(queryObj)
-  //   .populate('admissionSemester')
+  //   .populate('academicSemester')
   //   .populate({
   //     path: 'academicDepartment',
   //     populate: {
@@ -77,9 +77,9 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
   const studentQuery = new QueryBuilder(
     Student.find()
-    .populate('user')
-    .populate('admissionSemester')
-    .populate('academicDepartment academicFaculty'),
+      .populate('user')
+      .populate('academicSemester')
+      .populate('academicDepartment academicFaculty'),
     query,
   )
     .search(studentSearchableFields)
@@ -95,7 +95,7 @@ const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
 
 const getSingleStudentFromDB = async (id: string) => {
   const result = await Student.findById(id)
-    .populate('admissionSemester')
+    .populate('academicSemester')
     .populate({
       path: 'academicDepartment',
       populate: {
