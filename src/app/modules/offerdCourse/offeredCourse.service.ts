@@ -284,7 +284,6 @@ const getMyOfferedCoursesFromDB = async (
       },
     },
   ];
-
   const paginationQuery = [
     {
       $skip: skip,

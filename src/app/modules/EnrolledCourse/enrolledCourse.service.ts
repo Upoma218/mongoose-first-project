@@ -153,8 +153,7 @@ const getAllEnrolledCoursesFromDB = async (
   facultyId: string,
   query: Record<string, unknown>,
 ) => {
-  const faculty = await Faculty.findOne({ facultyId });
-  
+  const faculty = await Faculty.findOne({ id: facultyId });
 
   if (!faculty) {
     throw new AppError(httpStatus.NOT_FOUND, 'Faculty not found !');
