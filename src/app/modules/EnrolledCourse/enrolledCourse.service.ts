@@ -251,10 +251,6 @@ const updateEnrolledCourseMarksIntoDB = async (
     faculty: faculty._id,
   });
 
-  console.log("isCourseBelongToFaculty", isCourseBelongToFaculty,"semesterRegistration",semesterRegistration,"offeredCourse",
-  offeredCourse,"student",
-  student,
-  faculty._id)
 
   if (!isCourseBelongToFaculty) {
     throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden! !');
